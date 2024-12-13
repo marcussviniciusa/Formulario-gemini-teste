@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário Assistant AI</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <div class="main-content">
+        <div class="welcome-text">
+            <h1><span class="gradient-text">Formulário Assistant AI</span></h1>
+        </div>
+
+        <form id="aiForm" class="gemini-form">
+            <div class="form-group">
+                <label for="assistantName">1. Nome do Assistente: *</label>
+                <input type="text" id="assistantName" required>
+                <p class="helper-text">Como você quer que o assistente seja chamado? Ele terá um nome de pessoa ou algo relacionado ao negócio?</p>
+            </div>
+
+            <div class="form-group">
+                <label for="specialization">2. Especialização: *</label>
+                <input type="text" id="specialization" required>
+                <p class="helper-text">Em qual área o assistente é especializado? (Exemplo: marketing digital, vendas, suporte técnico, consultoria financeira, etc.)</p>
+            </div>
+
+            <div class="form-group">
+                <label for="targetAudience">3. Público-Alvo: *</label>
+                <input type="text" id="targetAudience" required>
+                <p class="helper-text">Quem é o público principal desse assistente? (Exemplo: empreendedores, profissionais de saúde, donos de pequenas empresas, etc.)</p>
+            </div>
+
+            <div class="form-group">
+                <label for="personality">4. Personalidade do Assistente: *</label>
+                <textarea id="personality" required></textarea>
+                <p class="helper-text">Como o assistente deve se comportar nas interações? Como ele se refere ao público?</p>
+            </div>
+
+            <div class="form-group">
+                <label for="achievements">5. Realizações ou Experiência: *</label>
+                <textarea id="achievements" required></textarea>
+                <p class="helper-text">O assistente deve ser conhecido por alguma conquista ou experiência específica?</p>
+            </div>
+
+            <div class="form-group">
+                <label for="products">6. Principais Produtos ou Serviços: *</label>
+                <textarea id="products" required></textarea>
+                <p class="helper-text">Quais são os principais produtos ou serviços que o assistente vai promover?</p>
+            </div>
+
+            <div class="form-group">
+                <label for="initialQuestion">7. Pergunta Inicial: *</label>
+                <input type="text" id="initialQuestion" required>
+                <p class="helper-text">Qual deve ser a primeira pergunta que o assistente faz ao lead após a saudação?</p>
+            </div>
+
+            <div class="form-group">
+                <label for="painPoints">8. Dores do Cliente: *</label>
+                <textarea id="painPoints" required></textarea>
+                <p class="helper-text">Quais são as principais dificuldades ou dores que o público-alvo enfrenta?</p>
+            </div>
+
+            <div class="form-group">
+                <label for="solutions">9. Soluções Oferecidas: *</label>
+                <textarea id="solutions" required></textarea>
+                <p class="helper-text">Como os produtos ou serviços resolvem essas dores? Qual o principal benefício que eles trazem?</p>
+            </div>
+
+            <div class="form-group">
+                <label for="differentials">10. Diferenciais: *</label>
+                <textarea id="differentials" required></textarea>
+                <p class="helper-text">O que torna o produto ou serviço do assistente diferente dos concorrentes?</p>
+            </div>
+
+            <div class="form-group">
+                <label for="purchaseProcess">11. Processo de Compra: *</label>
+                <textarea id="purchaseProcess" required></textarea>
+                <p class="helper-text">Quais são os próximos passos após o lead demonstrar interesse?</p>
+            </div>
+
+            <div class="form-group">
+                <label for="objections">12. Objeções Comuns: *</label>
+                <textarea id="objections" required></textarea>
+                <p class="helper-text">Quais são as principais dúvidas ou objeções que o público geralmente tem?</p>
+            </div>
+
+            <div class="form-group">
+                <label for="purchaseLinks">13. Links de Compra ou Contratação: *</label>
+                <input type="text" id="purchaseLinks" required>
+                <p class="helper-text">Existem links específicos de compra ou contratação que o assistente deve enviar durante a conversa?</p>
+            </div>
+
+            <div class="form-group">
+                <label for="urgency">14. Urgência: *</label>
+                <textarea id="urgency" required></textarea>
+                <p class="helper-text">Existe algum motivo para criar uma urgência sutil durante a venda?</p>
+            </div>
+
+            <div class="form-group">
+                <label for="paymentMethods">15. Métodos de Pagamento: *</label>
+                <textarea id="paymentMethods" required></textarea>
+                <p class="helper-text">Quais são as formas de pagamento disponíveis?</p>
+            </div>
+
+            <button type="submit" class="submit-button">
+                <span class="material-icons">send</span>
+                Enviar
+            </button>
+        </form>
+    </div>
+    <script src="script.js" type="module"></script>
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    </script>
+</body>
+</html>
