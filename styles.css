@@ -108,14 +108,18 @@ body {
     color: var(--accent-blue);
     background: linear-gradient(45deg, #4285f4, #4285f4);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
+    text-fill-color: transparent;
 }
 
 .purple {
     color: var(--accent-purple);
     background: linear-gradient(45deg, #db4437, #f4b400);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
+    text-fill-color: transparent;
 }
 
 .form-group {
