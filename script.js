@@ -1,20 +1,4 @@
-// Import Firebase modules
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-// Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyBJvi-dnY3xaMrnETS0mDah8lsTPhOIke8",
-  authDomain: "formulario-ai.firebaseapp.com",
-  projectId: "formulario-ai",
-  storageBucket: "formulario-ai.firebasestorage.app",
-  messagingSenderId: "535409570754",
-  appId: "1:535409570754:web:0a57791d27bca79658dc5b"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+// Script principal para gerenciar o formulário
 
 document.addEventListener('DOMContentLoaded', function() {
     const input = document.querySelector('.gemini-input input');
@@ -109,15 +93,30 @@ document.addEventListener('DOMContentLoaded', function() {
             purchaseProcess: document.getElementById('purchaseProcess').value,
             objections: document.getElementById('objections').value,
             purchaseLinks: document.getElementById('purchaseLinks').value,
+            urgency: document.getElementById('urgency').value,
+            paymentMethods: document.getElementById('paymentMethods').value,
             timestamp: new Date()
         };
         
         try {
-            // Salva os dados no Firestore
-            const docRef = await addDoc(collection(db, 'formularios'), formData);
-            console.log('Documento salvo com ID:', docRef.id);
-            alert('Formulário enviado com sucesso!');
-            form.reset();
+            // Enviar dados para o backend
+            const response = await fetch('/api/submit-form', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                console.log('Formulário salvo com ID:', result.id);
+                alert('Formulário enviado com sucesso!');
+                form.reset();
+            } else {
+                throw new Error(result.message || 'Erro ao enviar formulário');
+            }
         } catch (error) {
             console.error('Erro ao salvar o formulário:', error);
             alert('Ocorreu um erro ao enviar o formulário. Por favor, tente novamente.');

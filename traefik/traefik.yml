@@ -1,0 +1,38 @@
+api:
+  dashboard: true
+  debug: true
+
+entryPoints:
+  web:
+    address: ":80"
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+
+  websecure:
+    address: ":443"
+
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
+    watch: true
+    network: traefik-public
+  file:
+    directory: /etc/traefik/conf
+    watch: true
+
+certificatesResolvers:
+  letsencrypt:
+    acme:
+      email: seu-email@exemplo.com
+      storage: acme.json
+      httpChallenge:
+        entryPoint: web
+
+log:
+  level: INFO
+
+accessLog: {}

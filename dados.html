@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualização de Dados - Formulário Assistant AI</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        
+        .data-table th {
+            background-color: #007bff;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            position: sticky;
+            top: 0;
+        }
+        
+        .data-table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            vertical-align: top;
+        }
+        
+        .copy-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-right: 5px;
+        }
+        
+        .copy-btn:hover {
+            background-color: #218838;
+        }
+        
+        .copy-btn:active {
+            transform: scale(0.97);
+        }
+        
+        .copy-success {
+            background-color: #6c757d;
+        }
+        
+        .data-table tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .table-container {
+            max-height: 80vh;
+            overflow-y: auto;
+            margin-top: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        
+        .actions {
+            margin: 20px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .back-button {
+            background-color: #6c757d;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .back-button:hover {
+            background-color: #5a6268;
+        }
+        
+        .search-box {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            min-width: 300px;
+        }
+        
+        .timestamp {
+            font-size: 12px;
+            color: #6c757d;
+        }
+        
+        .empty-message {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+            font-style: italic;
+        }
+        
+        /* Estilos responsivos */
+        @media (max-width: 768px) {
+            .data-table {
+                font-size: 12px;
+            }
+            
+            .data-table th, .data-table td {
+                padding: 8px;
+            }
+            
+            .actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .search-box {
+                min-width: auto;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-content">
+        <div class="welcome-text">
+            <h1><span class="gradient-text">Visualização de Dados</span></h1>
+            <p>Dados submetidos através do Formulário Assistant AI</p>
+        </div>
+        
+        <div class="actions">
+            <a href="/" class="back-button">Voltar ao Formulário</a>
+            <input type="text" id="searchBox" class="search-box" placeholder="Pesquisar...">
+        </div>
+        
+        <div class="table-container">
+            <table class="data-table" id="dataTable">
+                <thead>
+                    <tr>
+                        <th>Ações</th>
+                        <th>Nome do Assistente</th>
+                        <th>Especialização</th>
+                        <th>Público-Alvo</th>
+                        <th>Personalidade</th>
+                        <th>Realizações</th>
+                        <th>Produtos/Serviços</th>
+                        <th>Pergunta Inicial</th>
+                        <th>Dores do Cliente</th>
+                        <th>Soluções</th>
+                        <th>Diferenciais</th>
+                        <th>Processo de Compra</th>
+                        <th>Objeções Comuns</th>
+                        <th>Links de Compra</th>
+                        <th>Urgência</th>
+                        <th>Pagamentos</th>
+                        <th>Data</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Os dados serão preenchidos dinamicamente pelo JavaScript -->
+                </tbody>
+            </table>
+            <div id="emptyMessage" class="empty-message" style="display:none;">
+                Nenhum dado encontrado. Preencha o formulário para começar.
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Função para carregar os dados da API
+        async function loadData() {
+            try {
+                const response = await fetch('/api/dados');
+                const data = await response.json();
+                
+                const tableBody = document.getElementById('tableBody');
+                const emptyMessage = document.getElementById('emptyMessage');
+                
+                if (data.length === 0) {
+                    emptyMessage.style.display = 'block';
+                    return;
+                }
+                
+                // Limpar tabela atual
+                tableBody.innerHTML = '';
+                
+                // Preencher tabela com dados
+                data.forEach(item => {
+                    const row = document.createElement('tr');
+                    
+                    // Função para criar célula com texto
+                    const createCell = (content) => {
+                        const cell = document.createElement('td');
+                        cell.textContent = content || '-';
+                        return cell;
+                    };
+                    
+                    // Adicionar coluna de ações com botão de copiar
+                    const actionsCell = document.createElement('td');
+                    const copyButton = document.createElement('button');
+                    copyButton.textContent = 'Copiar';
+                    copyButton.className = 'copy-btn';
+                    copyButton.dataset.id = item.id;
+                    copyButton.addEventListener('click', function() {
+                        copyFormattedData(item);
+                        this.textContent = 'Copiado!';
+                        this.classList.add('copy-success');
+                        setTimeout(() => {
+                            this.textContent = 'Copiar';
+                            this.classList.remove('copy-success');
+                        }, 2000);
+                    });
+                    actionsCell.appendChild(copyButton);
+                    row.appendChild(actionsCell);
+                    
+                    // Adicionar células com dados
+                    row.appendChild(createCell(item.assistantname));
+                    row.appendChild(createCell(item.specialization));
+                    row.appendChild(createCell(item.targetaudience));
+                    row.appendChild(createCell(item.personality));
+                    row.appendChild(createCell(item.achievements));
+                    row.appendChild(createCell(item.products));
+                    row.appendChild(createCell(item.initialquestion));
+                    row.appendChild(createCell(item.painpoints));
+                    row.appendChild(createCell(item.solutions));
+                    row.appendChild(createCell(item.differentials));
+                    row.appendChild(createCell(item.purchaseprocess));
+                    row.appendChild(createCell(item.objections));
+                    row.appendChild(createCell(item.purchaselinks));
+                    row.appendChild(createCell(item.urgency));
+                    row.appendChild(createCell(item.paymentmethods));
+                    
+                    // Formatar data
+                    const date = new Date(item.timestamp);
+                    const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+                    const dateCell = document.createElement('td');
+                    dateCell.classList.add('timestamp');
+                    dateCell.textContent = formattedDate;
+                    row.appendChild(dateCell);
+                    
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Erro ao carregar dados:', error);
+                alert('Erro ao carregar os dados. Por favor, tente novamente.');
+            }
+        }
+        
+        // Função para filtrar a tabela
+        function filterTable() {
+            const searchValue = document.getElementById('searchBox').value.toLowerCase();
+            const rows = document.getElementById('tableBody').getElementsByTagName('tr');
+            
+            for (let i = 0; i < rows.length; i++) {
+                const cells = rows[i].getElementsByTagName('td');
+                let rowMatch = false;
+                
+                for (let j = 0; j < cells.length; j++) {
+                    const cellText = cells[j].textContent.toLowerCase();
+                    if (cellText.includes(searchValue)) {
+                        rowMatch = true;
+                        break;
+                    }
+                }
+                
+                rows[i].style.display = rowMatch ? '' : 'none';
+            }
+        }
+        
+        // Função para copiar dados formatados
+        function copyFormattedData(item) {
+            const formattedData = [
+                `Nome do Assistente: ${item.assistantname}`,
+                `Especialização: ${item.specialization}`,
+                `Público-Alvo: ${item.targetaudience}`,
+                `Personalidade: ${item.personality}`,
+                `Realizações: ${item.achievements}`,
+                `Produtos/Serviços: ${item.products}`,
+                `Pergunta Inicial: ${item.initialquestion}`,
+                `Dores do Cliente: ${item.painpoints}`,
+                `Soluções: ${item.solutions}`,
+                `Diferenciais: ${item.differentials}`,
+                `Processo de Compra: ${item.purchaseprocess}`,
+                `Objeções Comuns: ${item.objections}`,
+                `Links de Compra: ${item.purchaselinks}`,
+                `Urgência: ${item.urgency}`,
+                `Pagamentos: ${item.paymentmethods}`
+            ].join('\n');
+            
+            navigator.clipboard.writeText(formattedData).then(() => {
+                console.log('Dados copiados para a área de transferência');
+            }).catch(err => {
+                console.error('Erro ao copiar dados:', err);
+                alert('Não foi possível copiar os dados. Por favor, tente novamente.');
+            });
+        }
+        
+        // Event listener para pesquisa
+        document.getElementById('searchBox').addEventListener('keyup', filterTable);
+        
+        // Carregar dados quando a página carregar
+        document.addEventListener('DOMContentLoaded', loadData);
+    </script>
+</body>
+</html>

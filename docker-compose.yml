@@ -1,0 +1,57 @@
+version: '3'
+
+networks:
+  traefik-public:
+    external: true  # Conecta à rede existente do Traefik
+  backend:
+    driver: bridge
+
+services:
+  formulario-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: formulario-app
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    networks:
+      - traefik-public
+      - backend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.formulario.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.formulario.entrypoints=websecure"
+      - "traefik.http.routers.formulario.tls.certresolver=${CERT_RESOLVER}"
+      - "traefik.http.services.formulario.loadbalancer.server.port=3000"
+
+  db:
+    image: postgres:14-alpine
+    container_name: formulario-db
+    restart: always
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend
+    labels:
+      - "traefik.enable=false"  # Não expor o banco de dados diretamente
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
